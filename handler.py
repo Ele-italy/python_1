@@ -1,4 +1,4 @@
-   from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request
 from pydantic import BaseModel
 from task_3_6 import drink
 
