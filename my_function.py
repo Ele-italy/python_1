@@ -6,7 +6,7 @@ def get_distance(locA, locB):
     #use haversine forumla
     cityA = (locA[0], locA[1])
     cityB = (locB[0], locB[1])
-    return distance.distance(cityA, cityB).km)
+    return round(distance.distance(cityA, cityB).km)
 
 def get_latlongs(location):
     geolocator = Nominatim(user_agent='API_KEY')
