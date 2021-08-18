@@ -1,12 +1,9 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from my_function import main
 
 
 app = FastAPI()
 
-@app.get("/")
-async def handler ():
-    return "hello world"
 
 @app.get("/distance/{a}/{b}")
 async def handler (a:str, b:str ):
