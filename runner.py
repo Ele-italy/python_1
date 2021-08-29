@@ -1,5 +1,4 @@
 import uvicorn
-
 from asgi import app
 
 if __name__ == "__main__":

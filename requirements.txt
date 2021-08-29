@@ -1,7 +1,5 @@
 fastapi
 uvicorn
-geopy
-numpy
 psycopg2-binary
 contextlib
 asyncpg

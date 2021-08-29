@@ -6,6 +6,7 @@ import pytest
 from asgi import app
 
 
+
 @pytest.mark.asyncio
 async def test():
     url = "/task/4"

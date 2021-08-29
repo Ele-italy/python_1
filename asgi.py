@@ -3,7 +3,6 @@ from fastapi import FastAPI
 from starlette.requests import Request
 from starlette.responses import HTMLResponse
 from starlette.responses import Response
-
 from users import gen_random_name
 from users import get_user
 from util import apply_cache_headers
