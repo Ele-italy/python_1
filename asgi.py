@@ -7,6 +7,7 @@ from users import gen_random_name
 from users import get_user
 from util import apply_cache_headers
 from util import static_response
+import db
 
 app = FastAPI()
 
