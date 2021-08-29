@@ -3,11 +3,13 @@ from fastapi import FastAPI
 from starlette.requests import Request
 from starlette.responses import HTMLResponse
 from starlette.responses import Response
+
+import db
 from users import gen_random_name
 from users import get_user
 from util import apply_cache_headers
 from util import static_response
-import db
+
 
 app = FastAPI()
 
@@ -38,7 +40,7 @@ async def _(response: Response):
 async def _(request: Request, response: Response, data: str = Body(...)):
     user = get_user(request) or gen_random_name()
     response.set_cookie("user", user)
-     if data == "stop":
+    if data == "stop":
         number = await db.get_number(user)
     else:
         number = await db.add_number(user, int(data))
