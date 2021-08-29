@@ -1,7 +1,0 @@
-async function xxx (u, meth) {
-    const r = await fetch (u, {method:meth});
-    const payload = await r.json ();
-    if (r.status == 200) {
-        console.log (payload);
-    } else {
-        alert(payload.detail);}}
