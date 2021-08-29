@@ -1,5 +1,6 @@
+asyncpg
 fastapi
 uvicorn
-psycopg2-binary
-contextlib
-asyncpg
+httpie
+httpx
+
