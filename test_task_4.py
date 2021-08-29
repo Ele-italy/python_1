@@ -6,7 +6,6 @@ import pytest
 from asgi import app
 
 
-
 @pytest.mark.asyncio
 async def test():
     url = "/task/4"
@@ -25,6 +24,7 @@ async def test():
         resp = await client.post(url, json="stop")
         assert resp.status_code == 200
         assert resp.json() == {"data": {"n": a + b}}
+
 
 
 

@@ -1,6 +1,7 @@
 import mimetypes
 from pathlib import Path
 from typing import Type
+
 from fastapi import HTTPException
 from starlette import status
 from starlette.responses import Response

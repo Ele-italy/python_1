@@ -5,12 +5,13 @@ from typing import AsyncIterator
 from typing import Dict
 from typing import List
 from typing import Optional
+
 import asyncpg
 
 RowT = Dict[str, Any]
 RowsT = List[RowT]
 
-DATABASE_URL: str = os.getenv("DATABASE_URL", "")
+DATABASE_URL: str = os.getenv("DATABASE_URL", "").replace("postgresql", "postgres")
 
 
 async def create_tables() -> None:
@@ -94,4 +95,3 @@ async def _connect_to_db() -> AsyncIterator:
     finally:
         if connection is not None:
             await connection.close()
-
