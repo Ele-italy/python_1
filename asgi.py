@@ -37,3 +37,8 @@ async def _(response: Response):
 async def _(request: Request, response: Response, data: str = Body(...)):
     user = get_user(request) or gen_random_name()
     response.set_cookie("user", user)
+     if data == "stop":
+        number = await db.get_number(user)
+    else:
+        number = await db.add_number(user, int(data))
+    return {"data": {"n": number}}
