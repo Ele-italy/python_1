@@ -1,36 +1,66 @@
 from typing import Optional
 
+import httpx
 from fastapi import Body
 from fastapi import FastAPI
-from starlette.requests import Request
-from starlette.responses import HTMLResponse
-from starlette.responses import Response
+from fastapi import Header
+from fastapi.requests import Request
+from fastapi.responses import Response
 
 import db
+import tg
 from lessons import task_3
 from users import gen_random_name
 from users import get_user
 from util import apply_cache_headers
+from util import authorize
 from util import static_response
 
 app = FastAPI()
 
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/tg/about")
+async def _(client: httpx.AsyncClient = tg.Telegram):
+    user = await tg.getMe(client)
+    return user
+
+
+@app.get("/tg/webhook")
+async def _(client: httpx.AsyncClient = tg.Telegram):
+    whi = await tg.getWebhookInfo(client)
+    return whi
+
+
+@app.post("/tg/webhook")
+async def _(
+    client: httpx.AsyncClient = tg.Telegram,
+    whi: tg.WebhookInfo = Body(...),
+    authorization: str = Header(""),
+):
+    authorize(authorization)
+    webhook_set = await tg.setWebhook(client, whi)
+    whi = await tg.getWebhookInfo(client)
+    return {
+        "ok": webhook_set,
+        "webhook": whi,
+    }
+
+
+@app.get("/")
 async def _(response: Response):
     apply_cache_headers(response)
 
-    return static_response("index.html", response_cls=HTMLResponse)
+    return static_response("index.html")
 
 
-@app.get("/img", response_class=Response)
+@app.get("/img")
 async def _(response: Response):
     apply_cache_headers(response)
 
-    return static_response("image.jpg", binary=True)
+    return static_response("image.jpg")
 
 
-@app.get("/js", response_class=Response)
+@app.get("/js")
 async def _(response: Response):
     apply_cache_headers(response)
 
