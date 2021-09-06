@@ -80,10 +80,11 @@ async function setUpTg() {
     let button = document.querySelector("#tg button");
 
     const setLabel = (wh) => {
-        labelWebhook.textContent = `Вебхук: ${wh.url}`;
+        labelWebhook.textContent =`Вебхук: ${wh.url}`;
     }
     const wh = await getWebhook();
     setLabel(wh);
+
     button.addEventListener("click", async function (event) {
         const wh = await setWebhook(inputWebhook.value, inputToken.value);
         inputWebhook.value = inputToken.value = "";

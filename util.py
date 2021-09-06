@@ -14,10 +14,7 @@ def apply_cache_headers(response: Response) -> None:
         "public",
         f"max_age={60 * 60}",
     )
-
     response.headers["Cache-Control"] = ",".join(cache_params)
-
-
 def static_response(file_name: str) -> Response:
     def get_file_path_safe() -> Path:
         file_path = Path(file_name).resolve()
@@ -27,17 +24,13 @@ def static_response(file_name: str) -> Response:
                 status_code=status.HTTP_404_NOT_FOUND,
             )
         return file_path
-
     def calc_media_type() -> str:
         return mimetypes.guess_type(file_name)[0] or "text/plain"
-
     file_path = get_file_path_safe()
     media_type = calc_media_type()
-
     with file_path.open("rb") as stream:
         content = stream.read()
         return Response(content=content, media_type=media_type)
-
 
 def authorize(token: str) -> None:
     exc = HTTPException(status_code=404, detail="not found")
@@ -48,3 +41,8 @@ def authorize(token: str) -> None:
     tokens_are_equal = hmac.compare_digest(token, expected_token)
     if not tokens_are_equal:
         raise exc
+
+
+def update_forward_refs(klass):
+    klass.update_forward_refs()
+    return klass
