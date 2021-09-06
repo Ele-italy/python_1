@@ -1,4 +1,3 @@
-import traceback
 from typing import Optional
 
 import httpx
@@ -10,11 +9,14 @@ from fastapi.responses import Response
 
 import db
 import tg
+from config import settings
 from lessons import task_3
 from users import gen_random_name
 from users import get_user
 from util import apply_cache_headers
 from util import authorize
+from util import hide_webhook_secret
+from util import safe
 from util import static_response
 
 app = FastAPI()
@@ -29,6 +31,7 @@ async def _(client: httpx.AsyncClient = tg.Telegram):
 @app.get("/tg/webhook")
 async def _(client: httpx.AsyncClient = tg.Telegram):
     whi = await tg.getWebhookInfo(client)
+    hide_webhook_secret(whi)
     return whi
 
 
@@ -39,47 +42,53 @@ async def _(
     authorization: str = Header(""),
 ):
     authorize(authorization)
+
+    whi.url = f"{whi.url}{settings.webhook_path}"
     webhook_set = await tg.setWebhook(client, whi)
+
     whi = await tg.getWebhookInfo(client)
+    hide_webhook_secret(whi)
+
     return {
         "ok": webhook_set,
         "webhook": whi,
     }
 
 
-@app.post("/tg/xxxx")
+@app.post(settings.webhook_path)
+@safe
 async def _(
     client: httpx.AsyncClient = tg.Telegram,
     update: tg.Update = Body(...),
 ):
-    try:
-        await tg.sendMessage(
-            client,
-            tg.SendMessageRequest(
-                chat_id=update.message.chat.id,
-                reply_to_message_id=update.message.message_id,
-                text=task_3(update.message.text),
-            ),
-        )
-    except Exception:
-        traceback.print_exc()
+    await tg.sendMessage(
+        client,
+        tg.SendMessageRequest(
+            chat_id=update.message.chat.id,
+            reply_to_message_id=update.message.message_id,
+            text=task_3(update.message.text),
+        ),
+    )
 
 
 @app.get("/")
 async def _(response: Response):
     apply_cache_headers(response)
+
     return static_response("index.html")
 
 
 @app.get("/img")
 async def _(response: Response):
     apply_cache_headers(response)
+
     return static_response("image.jpg")
 
 
 @app.get("/js")
 async def _(response: Response):
     apply_cache_headers(response)
+
     return static_response("index.js")
 
 
@@ -93,8 +102,10 @@ async def _(name: Optional[str] = Body(default=None)):
 async def _(request: Request, response: Response, data: str = Body(...)):
     user = get_user(request) or gen_random_name()
     response.set_cookie("user", user)
+
     if data == "stop":
         number = await db.get_number(user)
     else:
         number = await db.add_number(user, int(data))
+
     return {"data": {"n": number}}

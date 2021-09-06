@@ -1,7 +1,8 @@
-import os
 from typing import Optional
+
 import httpx
 
+from config import settings
 from tg.types import GetMeResponse
 from tg.types import GetWebhookInfoResponse
 from tg.types import Message
@@ -13,21 +14,19 @@ from tg.types import Type
 from tg.types import User
 from tg.types import WebhookInfo
 
-token = os.getenv("TG_BOT_TOKEN")
-url = f"https://api.telegram.org/bot{token}"
-assert token, "no tg token provided"
-print(f"token = {token!r}")
-
 
 async def telegram_client() -> httpx.AsyncClient:
-    async with httpx.AsyncClient(base_url=url) as client:
+    async with httpx.AsyncClient(base_url=settings.bot_url) as client:
         yield client
+
+
 rr_types_map = {
     "getMe": GetMeResponse,
     "getWebhookInfo": GetWebhookInfoResponse,
     "sendMessage": SendMessageResponse,
     "setWebhook": SetWebhookResponse,
 }
+
 
 async def api_call(
     client: httpx.AsyncClient, method: str, data: Optional[Type] = None
@@ -39,6 +38,7 @@ async def api_call(
     result = type.parse_obj(response_as_dict)
 
     return result
+
 
 async def getMe(client: httpx.AsyncClient) -> User:
     response = await api_call(client, "getMe")
